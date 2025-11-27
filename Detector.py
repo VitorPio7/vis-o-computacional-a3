@@ -57,18 +57,58 @@ class Detector:
                     classLabel = self.classesList[classLabelID]
                     classColor = [int(c) for c in self.colorList[classLabelID]]
                     
-                    ##Exibe a contagem dos objetos
-                    object_count[classLabel] = object_count.get(classLabel, 0)+1
-                    
-                    displayText = "{}:{:.2f}".format(classLabel, classConfidence)
-                    
-                    x,y,w,h = bbox
-                    area = w*h
-                    sizeText = f"{w}x{h}px Area:{area}px"
-                    
-                    cv2.rectangle(image, (x,y), (x+w, y+h), color=classColor, thickness=1)
-                    cv2.putText(image, displayText, (x+10, y), cv2.FONT_HERSHEY_PLAIN, 1, classColor, 2,1,True)
-                    cv2.putText(image, sizeText, (x+10, y+15), cv2.FONT_HERSHEY_PLAIN, 1, classColor, 2)
+                    object_count[classLabel] = object_count.get(classLabel, 0) + 1
+
+                    # Dados numéricos
+                    x, y, w, h = bbox
+                    area = w * h
+
+                    texts = [
+                        f"{classLabel}: {classConfidence:.2f}",
+                        f"Tamanho: {w}x{h}px",
+                        f"Area: {area}px"
+                    ]
+
+                    # Fundo semi-transparente
+                    padding = 5
+                    line_height = 18
+                    box_height = line_height * len(texts) + padding * 2
+                    box_width = 220
+
+                    overlay = image.copy()
+
+                    box_x1 = x
+                    box_y1 = max(0, y - box_height - 5)
+
+                    box_x2 = box_x1 + box_width
+                    box_y2 = box_y1 + box_height
+
+                    cv2.rectangle(overlay, (box_x1, box_y1), (box_x2, box_y2), (0, 0, 0), -1)
+                    image = cv2.addWeighted(overlay, 0.45, image, 0.55, 0)
+
+                    # Escrever textos sobre o fundo
+                    text_y = box_y1 + padding + 12
+                    for txt in texts:
+                        cv2.putText(image, txt, (box_x1 + padding, text_y),
+                                    cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 2)
+                        text_y += line_height
+
+                    # Caixa do objeto
+                    cv2.rectangle(image, (x, y), (x + w, y + h), classColor, 1)
+
+                    # Cantos grossos (estilo YOLO)
+                    lineWidth = min(int(w * 0.3), int(h * 0.3))
+                    cv2.line(image, (x, y), (x + lineWidth, y), classColor, 5)
+                    cv2.line(image, (x, y), (x, y + lineWidth), classColor, 5)
+
+                    cv2.line(image, (x + w, y), (x + w - lineWidth, y), classColor, 5)
+                    cv2.line(image, (x + w, y), (x + w, y + lineWidth), classColor, 5)
+
+                    cv2.line(image, (x, y + h), (x + lineWidth, y + h), classColor, 5)
+                    cv2.line(image, (x, y + h), (x, y + h - lineWidth), classColor, 5)
+
+                    cv2.line(image, (x + w, y + h), (x + w - lineWidth, y + h), classColor, 5)
+                    cv2.line(image, (x + w, y + h), (x + w, y + h - lineWidth), classColor, 5)
                     lineWidth = min(int(w * 0.3), int(h*0.3))
                     
                     cv2.line(image, (x,y), (x+lineWidth,y), classColor, thickness=5)
