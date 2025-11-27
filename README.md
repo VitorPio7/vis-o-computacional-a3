@@ -16,14 +16,14 @@ Diretório de testes (test_videos) para validação e demonstração.
 Estrutura simples para adaptação a novos modelos ou novos vídeos.
 
 Estrutura de pastas
-`
+```text
 /
 ├── model_data/        ← arquivos de modelo, pesos, etc.
 ├── test_videos/       ← vídeos de entrada para teste
 ├── Detector.py        ← módulo de detecção de objetos
 ├── main.py            ← script principal para execução
 └── README.md          ← este arquivo
-`
+```
 Requisitos
 
 Python 3.x
