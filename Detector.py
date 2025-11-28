@@ -72,7 +72,7 @@ class Detector:
             cv2.imshow("KMeans", segmented_img)
 
             # -----------------------------------------------------
-            # DETECÇÃO DE OBJETOS (YOLO)
+            # DETECÇÃO DE OBJETOS (SEU YOLO)
             # -----------------------------------------------------
             classLabelIDs, confidences, bboxs = self.net.detect(image, confThreshold=0.5)
 
